@@ -113,29 +113,40 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
       bottomNavigationBar: BottomAppBar(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
+          // crossAxisAlignment: CrossAxisAlignment.baseline,
+          // textBaseline: TextBaseline.alphabetic,
           children: [
-            Image.asset('assets/title.png', fit: BoxFit.cover),
-            ProgressBar(
-              progress: const Duration(milliseconds: 1000),
-              buffered: const Duration(milliseconds: 2000),
-              total: const Duration(milliseconds: 5000),
-              progressBarColor: Colors.red,
-              baseBarColor: Colors.white.withOpacity(0.24),
-              bufferedBarColor: Colors.white.withOpacity(0.24),
-              thumbColor: Colors.white,
-              barHeight: 3.0,
-              thumbRadius: 5.0,
-              onSeek: (duration) {
-                // _player.seek(duration);
-                print('User selected a new time: $duration');
-              },
+            SizedBox(
+              width: 42.0,
+              height: 42.0,
+              // child: Image.asset('assets/title.png', fit: BoxFit.cover),
+              child: Image.asset('favicon.png', fit: BoxFit.cover),
             ),
-            IconButton(icon: Icon(Icons.menu), onPressed: () {}),
             const Spacer(),
-            IconButton(icon: Icon(Icons.search), onPressed: () {}),
-            IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+            // TODO: add better flex layout?
+            SizedBox(
+              width: 302.0,
+              // height: 42.0,
+              child: ProgressBar(
+                progress: const Duration(milliseconds: 1000),
+                buffered: const Duration(milliseconds: 2000),
+                total: const Duration(milliseconds: 5000),
+                progressBarColor: Colors.red,
+                baseBarColor: Colors.white.withOpacity(0.24),
+                bufferedBarColor: Colors.white.withOpacity(0.24),
+                thumbColor: Colors.white,
+                barHeight: 3.0,
+                thumbRadius: 5.0,
+                onSeek: (duration) {
+                  // _player.seek(duration);
+                  print('User selected a new time: $duration');
+                },
+              ),
+            ),
+            const Spacer(),
+            IconButton(icon: Icon(Icons.play_arrow), onPressed: () {}),
+            // IconButton(icon: Icon(Icons.search), onPressed: () {}),
+            // IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
           ],
         ),
       ),
