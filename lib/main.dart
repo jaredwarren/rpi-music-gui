@@ -1,3 +1,4 @@
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -110,10 +111,38 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
-      bottomNavigationBar: _DemoBottomAppBar(
-        fabLocation: _fabLocations[_currentFabLocation.value],
-        shape: _showNotch.value ? const CircularNotchedRectangle() : null,
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Image.asset('assets/title.png', fit: BoxFit.cover),
+            ProgressBar(
+              progress: const Duration(milliseconds: 1000),
+              buffered: const Duration(milliseconds: 2000),
+              total: const Duration(milliseconds: 5000),
+              progressBarColor: Colors.red,
+              baseBarColor: Colors.white.withOpacity(0.24),
+              bufferedBarColor: Colors.white.withOpacity(0.24),
+              thumbColor: Colors.white,
+              barHeight: 3.0,
+              thumbRadius: 5.0,
+              onSeek: (duration) {
+                // _player.seek(duration);
+                print('User selected a new time: $duration');
+              },
+            ),
+            IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+            const Spacer(),
+            IconButton(icon: Icon(Icons.search), onPressed: () {}),
+            IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+          ],
+        ),
       ),
+      // bottomNavigationBar: _DemoBottomAppBar(
+      //   fabLocation: _fabLocations[_currentFabLocation.value],
+      //   shape: _showNotch.value ? const CircularNotchedRectangle() : null,
+      // ),
     );
   }
 }
