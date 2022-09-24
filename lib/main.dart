@@ -83,46 +83,58 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisSpacing: 16,
         ),
         children: [
-          Card(
-            elevation: 12,
-            child: GridTile(
-              // header: const GridTileBar(
-              //   title: Text(
-              //     'KindaCode.com',
-              //     style: TextStyle(color: Colors.black),
-              //   ),
-              // ),
-              child: Image.network('https://picsum.photos/250?image=1'),
-              footer: GridTileBar(
-                backgroundColor: Colors.white,
-                title: Row(
-                  children: const [
-                    Text(
-                      'KindaCode.com',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    // Icon(
-                    //   Icons.favorite_outline,
-                    //   color: Colors.grey,
-                    // ),
-                    // Text('20', style: TextStyle(color: Colors.black)),
-                    // SizedBox(
-                    //   width: 20,
-                    // ),
-                    // Icon(
-                    //   Icons.chat_bubble_outline,
-                    //   color: Colors.grey,
-                    // ),
-                    // Text(
-                    //   '5',
-                    //   style: TextStyle(color: Colors.black),
-                    // ),
-                  ],
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.play_arrow_outlined),
-                  color: Colors.black,
-                  onPressed: () {},
+          InkWell(
+            // When the user taps the button, show a snackbar.
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Card Tap'),
+              ));
+            },
+            child: Card(
+              elevation: 12,
+              child: GridTile(
+                // header: const GridTileBar(
+                //   title: Text(
+                //     'KindaCode.com',
+                //     style: TextStyle(color: Colors.black),
+                //   ),
+                // ),
+                child: Image.network('https://picsum.photos/250?image=1'),
+                footer: GridTileBar(
+                  backgroundColor: Colors.white,
+                  title: Row(
+                    children: const [
+                      Text(
+                        'this is a really long title that goes here',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      // Icon(
+                      //   Icons.favorite_outline,
+                      //   color: Colors.grey,
+                      // ),
+                      // Text('20', style: TextStyle(color: Colors.black)),
+                      // SizedBox(
+                      //   width: 20,
+                      // ),
+                      // Icon(
+                      //   Icons.chat_bubble_outline,
+                      //   color: Colors.grey,
+                      // ),
+                      // Text(
+                      //   '5',
+                      //   style: TextStyle(color: Colors.black),
+                      // ),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.play_arrow_outlined),
+                    color: Colors.black,
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Play Tap'),
+                      ));
+                    },
+                  ),
                 ),
               ),
             ),
