@@ -76,35 +76,62 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      body: GridView(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
         ),
+        children: [
+          Card(
+            elevation: 12,
+            child: GridTile(
+              // header: const GridTileBar(
+              //   title: Text(
+              //     'KindaCode.com',
+              //     style: TextStyle(color: Colors.black),
+              //   ),
+              // ),
+              child: Image.network('https://picsum.photos/250?image=1'),
+              footer: GridTileBar(
+                backgroundColor: Colors.white,
+                title: Row(
+                  children: const [
+                    Text(
+                      'KindaCode.com',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    // Icon(
+                    //   Icons.favorite_outline,
+                    //   color: Colors.grey,
+                    // ),
+                    // Text('20', style: TextStyle(color: Colors.black)),
+                    // SizedBox(
+                    //   width: 20,
+                    // ),
+                    // Icon(
+                    //   Icons.chat_bubble_outline,
+                    //   color: Colors.grey,
+                    // ),
+                    // Text(
+                    //   '5',
+                    //   style: TextStyle(color: Colors.black),
+                    // ),
+                  ],
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.play_arrow_outlined),
+                  color: Colors.black,
+                  onPressed: () {},
+                ),
+              ),
+            ),
+          ),
+          Image.network('https://picsum.photos/250?image=1'),
+          Image.network('https://picsum.photos/250?image=2'),
+          Image.network('https://picsum.photos/250?image=3'),
+          Image.network('https://picsum.photos/250?image=4'),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
