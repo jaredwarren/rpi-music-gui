@@ -1,33 +1,9 @@
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'grid/grid.dart';
+import 'player/player.dart';
 
 void main() {
-  // We're using HiveStore for persistence,
-  // so we need to initialize Hive.
-  // await initHiveForFlutter();
-
-  // final HttpLink httpLink = HttpLink(
-  //   'https://api.github.com/graphql',
-  // );
-
-  // final AuthLink authLink = AuthLink(
-  //   getToken: () async => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',
-  //   // OR
-  //   // getToken: () => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',
-  // );
-
-  // final Link link = authLink.concat(httpLink);
-
-  // ValueNotifier<GraphQLClient> client = ValueNotifier(
-  //   GraphQLClient(
-  //     link: link,
-  //     // The default store is the InMemoryStore, which does NOT persist to disk
-  //     cache: GraphQLCache(store: HiveStore()),
-  //   ),
-  // );
-
   runApp(MyApp());
 }
 
@@ -36,8 +12,6 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
   // TODO: make this a config option
-//  final httpLink = HttpLink("http://localhost:8000/graphql");
-
   ValueNotifier<GraphQLClient> client = ValueNotifier(GraphQLClient(
       cache: GraphQLCache(), link: HttpLink("http://localhost:8000/graphql")));
 
@@ -49,15 +23,6 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
           primarySwatch: Colors.blue,
         ),
         home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -68,16 +33,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -93,11 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
       print(_counter);
     });
@@ -146,11 +96,9 @@ query {
           // variables: {
           // 'counterId': 23,
           // },
-          // pollInterval: Duration(seconds: 10),
         ),
         builder: (QueryResult result,
             {VoidCallback? refetch, FetchMore? fetchMore}) {
-          // print(result);
           if (result.hasException) {
             return Text(result.exception.toString());
           }
@@ -159,22 +107,12 @@ query {
             return const Text('Loading');
           }
 
-          List? repositories =
-              result.data?['viewer']?['repositories']?['nodes'];
           List songs = result.data!['songs'];
-          if (songs.length == 0) {
+          if (songs.isEmpty) {
             return const Text('No repositories');
           }
 
           return loadSongGrid(context, songs);
-
-          return ListView.builder(
-              itemCount: songs.length,
-              itemBuilder: (context, index) {
-                final repository = songs[index];
-
-                return Text(repository['title'] ?? '');
-              });
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -182,46 +120,7 @@ query {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          // crossAxisAlignment: CrossAxisAlignment.baseline,
-          // textBaseline: TextBaseline.alphabetic,
-          children: [
-            SizedBox(
-              width: 42.0,
-              height: 42.0,
-              // child: Image.asset('assets/title.png', fit: BoxFit.cover),
-              child: Image.asset('favicon.png', fit: BoxFit.cover),
-            ),
-            const Spacer(),
-            // TODO: add better flex layout?
-            SizedBox(
-              width: 302.0,
-              // height: 42.0,
-              child: ProgressBar(
-                progress: const Duration(milliseconds: 1000),
-                buffered: const Duration(milliseconds: 2000),
-                total: const Duration(milliseconds: 5000),
-                progressBarColor: Colors.red,
-                baseBarColor: Colors.white.withOpacity(0.24),
-                bufferedBarColor: Colors.white.withOpacity(0.24),
-                thumbColor: Colors.white,
-                barHeight: 3.0,
-                thumbRadius: 5.0,
-                onSeek: (duration) {
-                  // _player.seek(duration);
-                  print('User selected a new time: $duration');
-                },
-              ),
-            ),
-            const Spacer(),
-            IconButton(
-              icon: const Icon(Icons.play_arrow),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: loadPlayer(context),
     );
   }
 }
