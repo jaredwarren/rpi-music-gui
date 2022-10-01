@@ -3,6 +3,7 @@ notes.md
 
 Run web
 `flutter run -d chrome`
+or click debug in vscode
 
 
 Progress bar

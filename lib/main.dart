@@ -1,31 +1,67 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'grid/grid.dart';
 
 void main() {
-  runApp(const MyApp());
+  // We're using HiveStore for persistence,
+  // so we need to initialize Hive.
+  // await initHiveForFlutter();
+
+  // final HttpLink httpLink = HttpLink(
+  //   'https://api.github.com/graphql',
+  // );
+
+  // final AuthLink authLink = AuthLink(
+  //   getToken: () async => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',
+  //   // OR
+  //   // getToken: () => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',
+  // );
+
+  // final Link link = authLink.concat(httpLink);
+
+  // ValueNotifier<GraphQLClient> client = ValueNotifier(
+  //   GraphQLClient(
+  //     link: link,
+  //     // The default store is the InMemoryStore, which does NOT persist to disk
+  //     cache: GraphQLCache(store: HiveStore()),
+  //   ),
+  // );
+
+  runApp(MyApp());
 }
 
+//
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  // TODO: make this a config option
+//  final httpLink = HttpLink("http://localhost:8000/graphql");
+
+  ValueNotifier<GraphQLClient> client = ValueNotifier(GraphQLClient(
+      cache: GraphQLCache(), link: HttpLink("http://localhost:8000/graphql")));
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    return GraphQLProvider(
+      client: client,
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -63,8 +99,21 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      print(_counter);
     });
   }
+
+  final String readCounters = """
+query {
+  songs {
+    title
+    thumb
+		rfid
+		url
+    id
+  }
+}
+""";
 
   @override
   Widget build(BuildContext context) {
@@ -91,52 +140,43 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20),
-          itemCount: myProducts.length,
-          itemBuilder: (BuildContext ctx, index) {
-            return InkWell(
-              // When the user taps the button, show a snackbar.
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Card Tap'),
-                ));
-              },
-              child: Card(
-                elevation: 12,
-                child: GridTile(
-                  child: Image.network(
-                      'https://picsum.photos/250?image=' + index.toString()),
-                  footer: GridTileBar(
-                    backgroundColor: Colors.white,
-                    title: Row(
-                      children: [
-                        Text(
-                          myProducts[index]["name"],
-                          style:
-                              TextStyle(color: Colors.black.withOpacity(0.8)),
-                        ),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.play_arrow_outlined),
-                      color: Colors.black,
-                      onPressed: () {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('Play Tap'),
-                        ));
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
+      body: Query(
+        options: QueryOptions(
+          document: gql(readCounters),
+          // variables: {
+          // 'counterId': 23,
+          // },
+          // pollInterval: Duration(seconds: 10),
+        ),
+        builder: (QueryResult result,
+            {VoidCallback? refetch, FetchMore? fetchMore}) {
+          // print(result);
+          if (result.hasException) {
+            return Text(result.exception.toString());
+          }
+
+          if (result.isLoading) {
+            return const Text('Loading');
+          }
+
+          List? repositories =
+              result.data?['viewer']?['repositories']?['nodes'];
+          List songs = result.data!['songs'];
+          if (songs.length == 0) {
+            return const Text('No repositories');
+          }
+
+          return loadSongGrid(context, songs);
+
+          return ListView.builder(
+              itemCount: songs.length,
+              itemBuilder: (context, index) {
+                final repository = songs[index];
+
+                return Text(repository['title'] ?? '');
+              });
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
