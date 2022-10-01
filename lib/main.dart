@@ -51,6 +51,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  final List<Map> myProducts =
+      List.generate(100, (index) => {"id": index, "name": "Product $index"})
+          .toList();
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -75,76 +79,64 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-      ),
-      body: GridView(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
-        children: [
-          InkWell(
-            // When the user taps the button, show a snackbar.
-            onTap: () {
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            color: Colors.black,
+            onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Card Tap'),
+                content: Text('Config Tap'),
               ));
             },
-            child: Card(
-              elevation: 12,
-              child: GridTile(
-                // header: const GridTileBar(
-                //   title: Text(
-                //     'KindaCode.com',
-                //     style: TextStyle(color: Colors.black),
-                //   ),
-                // ),
-                child: Image.network('https://picsum.photos/250?image=5'),
-                footer: GridTileBar(
-                  backgroundColor: Colors.white,
-                  title: Row(
-                    children: const [
-                      Text(
-                        'this is a really long title that goes here',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      // Icon(
-                      //   Icons.favorite_outline,
-                      //   color: Colors.grey,
-                      // ),
-                      // Text('20', style: TextStyle(color: Colors.black)),
-                      // SizedBox(
-                      //   width: 20,
-                      // ),
-                      // Icon(
-                      //   Icons.chat_bubble_outline,
-                      //   color: Colors.grey,
-                      // ),
-                      // Text(
-                      //   '5',
-                      //   style: TextStyle(color: Colors.black),
-                      // ),
-                    ],
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.play_arrow_outlined),
-                    color: Colors.black,
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Play Tap'),
-                      ));
-                    },
+          ),
+        ],
+      ),
+      body: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              childAspectRatio: 3 / 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20),
+          itemCount: myProducts.length,
+          itemBuilder: (BuildContext ctx, index) {
+            return InkWell(
+              // When the user taps the button, show a snackbar.
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Card Tap'),
+                ));
+              },
+              child: Card(
+                elevation: 12,
+                child: GridTile(
+                  child: Image.network(
+                      'https://picsum.photos/250?image=' + index.toString()),
+                  footer: GridTileBar(
+                    backgroundColor: Colors.white,
+                    title: Row(
+                      children: [
+                        Text(
+                          myProducts[index]["name"],
+                          style:
+                              TextStyle(color: Colors.black.withOpacity(0.8)),
+                        ),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.play_arrow_outlined),
+                      color: Colors.black,
+                      onPressed: () {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Play Tap'),
+                        ));
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Image.network('https://picsum.photos/250?image=1'),
-          Image.network('https://picsum.photos/250?image=2'),
-          Image.network('https://picsum.photos/250?image=3'),
-          Image.network('https://picsum.photos/250?image=4'),
-        ],
-      ),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
@@ -183,16 +175,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             const Spacer(),
-            IconButton(icon: Icon(Icons.play_arrow), onPressed: () {}),
-            // IconButton(icon: Icon(Icons.search), onPressed: () {}),
-            // IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+            IconButton(
+              icon: const Icon(Icons.play_arrow),
+              onPressed: () {},
+            ),
           ],
         ),
       ),
-      // bottomNavigationBar: _DemoBottomAppBar(
-      //   fabLocation: _fabLocations[_currentFabLocation.value],
-      //   shape: _showNotch.value ? const CircularNotchedRectangle() : null,
-      // ),
     );
   }
 }

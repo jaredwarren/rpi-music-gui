@@ -13,3 +13,6 @@ nfc
 https://pub.dev/packages/flutter_nfc_kit ?
  - doesn't support web
 
+
+## nav
+https://docs.flutter.dev/cookbook/navigation/navigation-basics
